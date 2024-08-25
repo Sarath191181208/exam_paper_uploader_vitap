@@ -1,9 +1,11 @@
-import imageCompression from "browser-image-compression";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent } from "react";
 
-const ImageUpload: React.FC = () => {
-  const [images, setImages] = useState<string[]>([]);
+interface ImageUploadProps {
+  images: string[];
+  setImages: React.Dispatch<React.SetStateAction<string[]>>;
+}
 
+const ImageUpload: React.FC<ImageUploadProps> = ({ images, setImages }) => {
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -18,72 +20,46 @@ const ImageUpload: React.FC = () => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const upload = async () => {
-    // copress the images and show the stats
-    const options = {
-      maxSizeMB: 0.25,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-    const compressedImages = await Promise.all(
-      images.map(async (fileObjURL) => {
-        const compressedFile = await imageCompression(fileObjURL, options);
-        return compressedFile;
-      }),
-    );
-
-    console.log(compressedImages);
-  };
-
   return (
     <>
-      <button
-        className="bg-white border-white mb-4 rounded-sm text-black p-3"
-        onClick={upload}
-      >
-        Upload the things
-      </button>
-      <div className="p-4 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Upload Exam papers</h1>
-        <div className="mb-4">
-          <ChooseImageLabel />
-          <div className="flex items-center justify-center w-full">
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400">
-              <DownArrow />
-              <span className="text-gray-600 mt-2">
-                Drag & drop or click to upload
-              </span>
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageChange}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-            </label>
-          </div>
+      <div className="mb-4">
+        <ChooseImageLabel />
+        <div className="flex items-center justify-center w-full relative">
+          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400">
+            <DownArrow />
+            <span className="text-gray-600 mt-2">
+              Drag & drop or click to upload
+            </span>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+            />
+          </label>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {images.map((img, index) => (
-            <div
-              key={index}
-              className="relative w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden"
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {images.map((img, index) => (
+          <div
+            key={index}
+            className="relative w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden"
+          >
+            <img
+              src={img}
+              alt={`Uploaded #${index}`}
+              className="w-full h-full object-cover"
+            />
+            <button
+              onClick={() => handleRemoveImage(index)}
+              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+              aria-label="Remove image"
             >
-              <img
-                src={img}
-                alt={`Uploaded #${index}`}
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={() => handleRemoveImage(index)}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                aria-label="Remove image"
-              >
-                <DeleteIcon />
-              </button>
-            </div>
-          ))}
-        </div>
+              <DeleteIcon />
+            </button>
+          </div>
+        ))}
       </div>
     </>
   );
