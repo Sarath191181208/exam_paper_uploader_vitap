@@ -6,6 +6,7 @@ export interface FormState {
   courseCode: string;
   examType: string;
   examSlot: string;
+  examDate: Date | undefined;
 }
 
 export type FormErrors = Partial<FormState>;
@@ -16,6 +17,7 @@ export function getEmptyFormState(): FormState {
     courseCode: "",
     examType: "",
     examSlot: "",
+    examDate: undefined,
   };
 }
 
