@@ -9,7 +9,11 @@ export interface FormState {
   examDate: Date | undefined;
 }
 
-export type FormErrors = Partial<FormState>;
+export type FormErrors = {
+  [K in keyof FormState]?: string;
+} & {
+  errors?: string;
+};
 
 export function getEmptyFormState(): FormState {
   return {
@@ -21,9 +25,9 @@ export function getEmptyFormState(): FormState {
   };
 }
 
-export function useUploadPaperForm(){
+export function useUploadPaperForm() {
   const [formState, setFormState] = useState<FormState>(getEmptyFormState());
-  const [errors, setErrors] = useState<FormErrors>(getEmptyFormState());
+  const [errors, setErrors] = useState<FormErrors>({});
   const validateForm = () => {
     const newErrors: FormErrors = {};
     if (!formState.name) newErrors.name = "Name is required.";
@@ -36,15 +40,20 @@ export function useUploadPaperForm(){
       newErrors.examType = "Type of the Exam is required.";
     }
     if (!formState.examSlot) newErrors.examSlot = "Exam Slot is required.";
+    if (formState.examDate == undefined) newErrors.examDate = "Date is required";
+    else {
+      if (formState.examDate > new Date()) newErrors.examDate = "Date shouldn't be in the future.";
+    }
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
   const [images, setImages] = useState<string[]>([]);
 
   return {
-    formState, 
-    errors, 
-    images, 
+    formState,
+    errors,
+    images,
     validateForm,
     setImages,
     setErrors,
