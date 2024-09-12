@@ -3,10 +3,12 @@
 import { admin } from "app/firebase/firebaseAdmin";
 import { FormState } from "app/hooks/uploadPaperForm";
 import { getAuth } from "firebase-admin/auth";
+import { validateUploadForm } from "../validators/validateUpload";
+import { uploadActionStates } from "@/app/actions/actionStates";
 
 const verifyUser = async (token: string) => {
   try {
-    const decodedToken = getAuth(admin).verifyIdToken(token);
+    const decodedToken = await getAuth(admin).verifyIdToken(token);
     return decodedToken;
   } catch (error) {
     console.error("Error verifying token", error);
@@ -16,16 +18,35 @@ const verifyUser = async (token: string) => {
 
 export async function uploadAction(formData: FormState, authToken: string) {
   if (!authToken) {
-    throw new Error("Unauthorized: No auth token");
+    return {
+      state: uploadActionStates.unothorizedToken,
+    }
   }
 
   const user = await verifyUser(authToken);
   if (!user) {
-    throw new Error("Unauthorized: Invalid token");
+    return {
+      state: uploadActionStates.unothorizedToken,
+    }
   }
 
+  if (!formData) {
+    return {
+      state: uploadActionStates.noData,
+    }
+  }
+
+  const errors = validateUploadForm(formData);
+  if (Object.keys(errors).length > 0) {
+    return {
+      state: uploadActionStates.validationError,
+      errors,
+    };
+  }
+
+
   return {
-    message: "Image uploaded successfully",
+    state: uploadActionStates.success,
     user,
   };
 }

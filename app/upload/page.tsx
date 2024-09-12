@@ -25,16 +25,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
+import { AlertCircle, CalendarIcon } from "lucide-react";
 import { useAuth } from "app/context/AuthContext";
 import { ErrorMessage } from "app/components/ErrorMessage";
 import { uploadAction } from "app/actions/saveUploadAction";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { uploadActionStates } from "../actions/actionStates";
 
 export default function Home() {
   const { formState, errors: formErrors, images, validateForm, setImages, setFormState } =
     useUploadPaperForm();
 
   const { currentUser } = useAuth();
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -44,10 +47,14 @@ export default function Home() {
       alert("Please signin to continue")
       return;
     }
-    const token = await currentUser.getIdToken()
-    console.log(token);
-    const res = await uploadAction(formState ,token)
-    console.log(res);
+    const token = await currentUser.getIdToken(); 
+    const res = await uploadAction(formState, token)
+
+    if (res.state != uploadActionStates.success) {
+      setSubmitError(res.state)
+      return;
+    }
+
 
     // const compressedImages = compressImages(images);
     alert("Upload successful")
@@ -66,6 +73,16 @@ export default function Home() {
         <h1 className="mb-4 font-bold text-3xl text-gray-300">
           Upload Exam paper
         </h1>
+        {(submitError!=null) && <Alert variant="destructive" className="my-4">
+          <AlertCircle className="mr-2 w-4 h-4" />
+          <AlertTitle>{submitError}</AlertTitle>
+          {/* <AlertDescription>
+            Your session has expired. Please log in again.
+          </AlertDescription> */}
+
+        </Alert>
+        }
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <ExamForm
             formState={formState}
@@ -80,7 +97,7 @@ export default function Home() {
           </button>
         </form>
       </div>
-    </main>
+    </main >
   );
 }
 
