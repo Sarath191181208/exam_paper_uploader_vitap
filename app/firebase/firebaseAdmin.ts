@@ -8,4 +8,4 @@ const firebaseOptions: ServiceAccount = {
 
 export const admin = initializeApp({
   credential: cert(firebaseOptions),
-});
+}, process.env.FIREBASE_PROJECT_ID);
