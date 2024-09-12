@@ -26,18 +26,31 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
+import { useAuth } from "app/context/AuthContext";
+import { ErrorMessage } from "app/components/ErrorMessage";
+import { uploadAction } from "app/actions/saveUploadAction";
 
 export default function Home() {
-  const { formState, errors, images, validateForm, setImages, setFormState } =
+  const { formState, errors: formErrors, images, validateForm, setImages, setFormState } =
     useUploadPaperForm();
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  const { currentUser } = useAuth();
 
-    const compressedImages = compressImages(images);
-    // upload the compressed images
-    // and formState to the server
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    // if (!validateForm()) return;
+
+    if (!currentUser) {
+      alert("Please signin to continue")
+      return;
+    }
+    const token = await currentUser.getIdToken()
+    console.log(token);
+    const res = await uploadAction(formState ,token)
+    console.log(res);
+
+    // const compressedImages = compressImages(images);
+    alert("Upload successful")
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +70,7 @@ export default function Home() {
           <ExamForm
             formState={formState}
             handleInputChange={handleInputChange}
-            errors={errors}
+            errors={formErrors}
           />
           <ImageUpload images={images} setImages={setImages} />
           <button
@@ -108,9 +121,9 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
           className="rounded-lg w-full text-sm"
           placeholder="Enter exam name"
         />
-        {errors.name && (
-          <p className="mt-1 text-red-500 text-sm">{errors.name}</p>
-        )}
+        <ErrorMessage>
+          {errors.name}
+        </ErrorMessage>
       </div>
 
       <div>
@@ -129,9 +142,10 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
           placeholder="CSE3004"
           title="Course code should be in the format 'ABC1234'."
         />
-        {errors.courseCode && (
-          <p className="mt-1 text-red-500 text-sm">{errors.courseCode}</p>
-        )}
+
+        <ErrorMessage>
+          {errors.courseCode}
+        </ErrorMessage>
       </div>
 
       <div>
@@ -157,9 +171,9 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
             <SelectItem value="fat">FAT</SelectItem>
           </SelectContent>
         </Select>
-        {errors.examType && (
-          <p className="mt-1 text-red-500 text-sm">{errors.examType}</p>
-        )}
+        <ErrorMessage>
+          {errors.examType}
+        </ErrorMessage>
       </div>
 
       <div>
@@ -189,9 +203,9 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
             </SelectContent>
           </Select>
         }
-        {errors.examSlot && (
-          <p className="mt-1 text-red-500 text-sm">{errors.examSlot}</p>
-        )}
+        <ErrorMessage>
+          {errors.examSlot}
+        </ErrorMessage>
       </div>
 
       <div className="flex flex-col">
@@ -221,7 +235,7 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
                   target: {
                     id: "examDate",
                     // @ts-ignore
-                    value: selectedDay, 
+                    value: selectedDay,
                   },
                 });
               }}
@@ -229,11 +243,13 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
             />
           </PopoverContent>
         </Popover>
+
+        <ErrorMessage>
+          {errors.examDate}
+        </ErrorMessage>
       </div>
 
-      {errors.examDate && (
-        <p className="mt-1 text-red-500 text-sm">{errors.examSlot}</p>
-      )}
+
     </div>
   );
 }
