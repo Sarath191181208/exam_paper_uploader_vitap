@@ -15,12 +15,12 @@ export function validateUploadForm(formState: FormState): FormErrors {
     }
 
     // check required exam type
-    if (!formState.examType) {
+    if (!formState.examType || formState.examType == undefined) {
         newErrors.examType = "Type of the Exam is required.";
     }
 
     // check required exam slot
-    if (!formState.examSlot) newErrors.examSlot = "Exam Slot is required.";
+    if (!formState.examSlot || formState.examSlot == undefined) newErrors.examSlot = "Exam Slot is required.";
 
     // check required exam date and if inputed future date
     if (formState.examDate == undefined) newErrors.examDate = "Date is required";
