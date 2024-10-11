@@ -29,13 +29,19 @@ import { AlertCircle, CalendarIcon } from "lucide-react";
 import { useAuth } from "app/context/AuthContext";
 import { ErrorMessage } from "app/components/ErrorMessage";
 import { uploadAction } from "app/actions/saveUploadAction";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { uploadActionStates } from "../actions/actionStates";
 import { uploadImages } from "./uploadImage";
 
 export default function Home() {
-  const { formState, errors: formErrors, images, validateForm, setImages, setFormState } =
-    useUploadPaperForm();
+  const {
+    formState,
+    errors: formErrors,
+    images,
+    validateForm,
+    setImages,
+    setFormState,
+  } = useUploadPaperForm();
 
   const { currentUser } = useAuth();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -45,18 +51,24 @@ export default function Home() {
     if (!validateForm()) return;
 
     if (!currentUser) {
-      alert("Please signin to continue")
+      alert("Please signin to continue");
       return;
     }
 
     const compressedImages = await compressImages(images);
-    const imageURLs = uploadImages(compressedImages);
+    console.log({ compressedImages });
+    const imageURLs = await uploadImages(
+      currentUser.uid,
+      compressedImages,
+      formState.courseCode,
+    );
+    console.log({ imageURLs });
 
-    const token = await currentUser.getIdToken(); 
-    const res = await uploadAction(formState, token)
+    const token = await currentUser.getIdToken();
+    const res = await uploadAction(formState, imageURLs, token);
 
     if (res.state != uploadActionStates.success) {
-      setSubmitError(res.state)
+      setSubmitError(res.state);
       return;
     }
   };
@@ -74,15 +86,17 @@ export default function Home() {
         <h1 className="mb-4 font-bold text-3xl text-gray-300">
           Upload Exam paper
         </h1>
-        {(submitError!=null) && <Alert variant="destructive" className="my-4">
-          <AlertCircle className="mr-2 w-4 h-4" />
-          <AlertTitle>{submitError}</AlertTitle>
-          {/* <AlertDescription>
+        {(submitError != null) && (
+          <Alert variant="destructive" className="my-4">
+            <AlertCircle className="mr-2 w-4 h-4" />
+            <AlertTitle>{submitError}</AlertTitle>
+            {
+              /* <AlertDescription>
             Your session has expired. Please log in again.
-          </AlertDescription> */}
-
-        </Alert>
-        }
+          </AlertDescription> */
+            }
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <ExamForm
@@ -91,14 +105,12 @@ export default function Home() {
             errors={formErrors}
           />
           <ImageUpload images={images} setImages={setImages} />
-          <button
-            className="bg-gray-800 dark:hover:bg-gray-200 hover:bg-gray-700 dark:bg-white px-4 py-2 rounded-lg font-medium text-sm text-white dark:hover:text-gray-500 hover:text-white dark:text-gray-800"
-          >
+          <button className="bg-gray-800 dark:hover:bg-gray-200 hover:bg-gray-700 dark:bg-white px-4 py-2 rounded-lg font-medium text-sm text-white dark:hover:text-gray-500 hover:text-white dark:text-gray-800">
             Upload
           </button>
         </form>
       </div>
-    </main >
+    </main>
   );
 }
 
@@ -237,11 +249,11 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
               className="justify-start font-normal text-left"
             >
               <CalendarIcon className="opacity-50 mr-3 w-4 h-4" />
-              {formState.examDate ? (
-                format(formState.examDate, "PPP")
-              ) : (
-                <span>Pick a date</span>
-              )}
+              {formState.examDate
+                ? (
+                  format(formState.examDate, "PPP")
+                )
+                : <span>Pick a date</span>}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-0 w-auto" align="start">
@@ -266,8 +278,6 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
           {errors.examDate}
         </ErrorMessage>
       </div>
-
-
     </div>
   );
 }
