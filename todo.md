@@ -1,0 +1,6 @@
+- [ ] handle image upload. 
+    - [ ]  Upload images into the `userid/coursecode` folder.
+        - [ ] Security rule to allow only the user to upload 3 images.
+    - [ ] Get the image urls 
+    - [ ] Save the image urls in the database.
+        - [ ] Check if the user has images present in the database.

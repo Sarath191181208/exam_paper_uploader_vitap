@@ -31,6 +31,7 @@ import { ErrorMessage } from "app/components/ErrorMessage";
 import { uploadAction } from "app/actions/saveUploadAction";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { uploadActionStates } from "../actions/actionStates";
+import { uploadImages } from "./uploadImage";
 
 export default function Home() {
   const { formState, errors: formErrors, images, validateForm, setImages, setFormState } =
@@ -47,6 +48,10 @@ export default function Home() {
       alert("Please signin to continue")
       return;
     }
+
+    const compressedImages = await compressImages(images);
+    const imageURLs = uploadImages(compressedImages);
+
     const token = await currentUser.getIdToken(); 
     const res = await uploadAction(formState, token)
 
@@ -54,10 +59,6 @@ export default function Home() {
       setSubmitError(res.state)
       return;
     }
-
-
-    // const compressedImages = compressImages(images);
-    alert("Upload successful")
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

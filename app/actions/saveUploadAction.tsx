@@ -44,6 +44,8 @@ export async function uploadAction(formData: FormState, authToken: string) {
     };
   }
 
+  // TODO: check the size of the imagegs
+
 
   return {
     state: uploadActionStates.success,
