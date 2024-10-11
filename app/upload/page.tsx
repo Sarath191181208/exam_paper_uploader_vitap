@@ -90,11 +90,6 @@ export default function Home() {
           <Alert variant="destructive" className="my-4">
             <AlertCircle className="mr-2 w-4 h-4" />
             <AlertTitle>{submitError}</AlertTitle>
-            {
-              /* <AlertDescription>
-            Your session has expired. Please log in again.
-          </AlertDescription> */
-            }
           </Alert>
         )}
 
