@@ -1,42 +1,29 @@
 "use server";
 
-import { admin } from "app/firebase/firebaseAdmin";
+import { doc, setDoc } from "firebase/firestore";
+
+import { getExamEntryDocPath } from "app/firebase/paths";
+import { uploadActionStates } from "app/actions/actionStates";
+import { firestore } from "app/firebase/firebase";
 import { FormState } from "app/hooks/uploadPaperForm";
-import { getAuth } from "firebase-admin/auth";
-import { validateUploadForm } from "../validators/validateUpload";
-import { uploadActionStates } from "@/app/actions/actionStates";
 
-const verifyUser = async (token: string) => {
-  try {
-    const decodedToken = await getAuth(admin).verifyIdToken(token);
-    return decodedToken;
-  } catch (error) {
-    console.error("Error verifying token", error);
-    return null;
-  }
-};
+import { validateUploadForm } from "app/validators/validateUpload";
+import { validateImages } from "app/validators/validateImages";
+import { validateUser } from "app/validators/validateUser";
 
-export async function uploadAction(formData: FormState, authToken: string) {
-  if (!authToken) {
+export async function uploadAction(
+  examData: FormState,
+  imageURLs: string[],
+  authToken: string,
+) {
+  let { errState, user } = await validateUser(authToken);
+  if (errState != null || user == null) {
     return {
-      state: uploadActionStates.unothorizedToken,
-    }
+      state: errState,
+    };
   }
 
-  const user = await verifyUser(authToken);
-  if (!user) {
-    return {
-      state: uploadActionStates.unothorizedToken,
-    }
-  }
-
-  if (!formData) {
-    return {
-      state: uploadActionStates.noData,
-    }
-  }
-
-  const errors = validateUploadForm(formData);
+  const errors = validateUploadForm(examData);
   if (Object.keys(errors).length > 0) {
     return {
       state: uploadActionStates.validationError,
@@ -44,8 +31,41 @@ export async function uploadAction(formData: FormState, authToken: string) {
     };
   }
 
-  // TODO: check the size of the imagegs
+  errState = validateImages(imageURLs);
+  if (errState != null) {
+    return {
+      state: errState,
+    };
+  }
 
+  const examType = examData.examType!;
+  const uploadedDate = (new Date()).toISOString();
+
+  const paperEntry = {
+    name: examData.name,
+    courseCode: examData.courseCode,
+    examType,
+    examSlot: examData.examSlot,
+    examDate: examData.examDate,
+    imageURLs,
+
+    uploadedDate,
+    uploader: user.uid,
+  };
+
+  const papersDocPath = getExamEntryDocPath(examData.courseCode, examType);
+  const papersRef = doc(firestore, papersDocPath);
+
+  try {
+    setDoc(papersRef, {
+      [user.uid]: paperEntry,
+    });
+  } catch (error) {
+    console.error("Error updating document: ", error);
+    return {
+      state: uploadActionStates.unknownError,
+    };
+  }
 
   return {
     state: uploadActionStates.success,
