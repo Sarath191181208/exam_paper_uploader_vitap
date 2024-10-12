@@ -1,24 +1,7 @@
 import { useState } from "react";
 import { validateUploadForm } from "app/validators/validateUpload";
+import { CourseCode, ExamType, ExamSlot } from "app/data/ExamEntry";
 
-export type CourseCode = string;
-export type ExamType = "cat1" | "cat2" | "fat";
-
-type ExamSlot =
-  | "A1"
-  | "A2"
-  | "B1"
-  | "B2"
-  | "C1"
-  | "C2"
-  | "D1"
-  | "D2"
-  | "E1"
-  | "E2"
-  | "F1"
-  | "F2"
-  | "G1"
-  | "G2";
 
 export interface FormState {
   name: string;
