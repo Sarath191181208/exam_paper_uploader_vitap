@@ -1,4 +1,4 @@
-import { ExamType } from "../hooks/uploadPaperForm";
+import { CourseCode, ExamType } from "../hooks/uploadPaperForm";
 
 export function getUserUploadDocPath(userId: string): string {
   return `/users_uploads/${userId}`;
@@ -12,8 +12,15 @@ export function getStorageImageUploadPath(
 }
 
 export function getExamEntryDocPath(
-  courseCode: string, 
+  courseCode: CourseCode, 
   examType: ExamType,
 ): string {
   return `${examType}/${courseCode}`;
+}
+
+export function getCourseCodeAvaliableDocPath(
+  examType: ExamType 
+) : string{
+  //return "uploads", examType
+  return `uploads/${examType}`
 }
