@@ -46,11 +46,11 @@ export async function uploadAction(
     courseCode: examData.courseCode,
     examType,
     examSlot: examData.examSlot,
-    examDate: examData.examDate,
+    examDate: examData.examDate?.toISOString(),
     imageURLs,
 
     uploadedDate,
-    uploader: user.uid,
+    uploader: user.email,
   };
 
   try {
