@@ -37,12 +37,11 @@ export const IconCardDescription: React.FC<IconCardDescriptionProps> = (
 
 interface IconCardProps {
   children: React.ReactNode;
-  onClick: () => void
 }
 
-export const IconCard: React.FC<IconCardProps> = ({ children, onClick}) => {
+export const IconCard: React.FC<IconCardProps> = ({ children}) => {
   return (
-    <div onClick={onClick} className="bg-gray-800 rounded-lg shadow-lg p-6 hover:scale-105 transition-all flex flex-col items-center text-center">
+    <div className="bg-gray-800 rounded-lg shadow-lg p-6 hover:scale-105 transition-all flex flex-col items-center text-center">
       {children}
     </div>
   );
