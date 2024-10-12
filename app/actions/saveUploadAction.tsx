@@ -1,8 +1,8 @@
 "use server";
 
-import { doc, setDoc } from "firebase/firestore";
+import { doc, runTransaction, setDoc } from "firebase/firestore";
 
-import { getExamEntryDocPath } from "app/firebase/paths";
+import { getCourseCodeAvaliableDocPath, getExamEntryDocPath } from "app/firebase/paths";
 import { uploadActionStates } from "app/actions/actionStates";
 import { firestore } from "app/firebase/firebase";
 import { FormState } from "app/hooks/uploadPaperForm";
@@ -53,12 +53,19 @@ export async function uploadAction(
     uploader: user.uid,
   };
 
-  const papersDocPath = getExamEntryDocPath(examData.courseCode, examType);
-  const papersRef = doc(firestore, papersDocPath);
-
   try {
-    setDoc(papersRef, {
-      [user.uid]: paperEntry,
+    runTransaction(firestore, async (transaction) => {
+      const papersRef = doc(
+        firestore,
+        getExamEntryDocPath(examData.courseCode, examType),
+      );
+      transaction.set(papersRef, {
+        [user.uid]: paperEntry,
+      }, {merge: true});
+      const uploadsRef = doc(firestore, getCourseCodeAvaliableDocPath(examType));
+      transaction.set(uploadsRef, {
+        [examData.courseCode]: true,
+      }, {merge: true});
     });
   } catch (error) {
     console.error("Error updating document: ", error);
