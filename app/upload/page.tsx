@@ -46,33 +46,44 @@ export default function Home() {
   const { currentUser } = useAuth();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const _uploadFiles = async (user: User) => {
+    const compressedImages: File[] = await compressImages(images);
+    const pdfFile = await getPDFFromImages(compressedImages);
+    const pdfURL = await uploadPDF(user.uid, pdfFile)
+
+    const token = await user.getIdToken();
+    return await uploadAction(formState, pdfURL, token);
+  }
+
+  const _handleSubmitWrapper = async (e: FormEvent): Promise<PageState> => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm()) return "edit";
 
     if (!currentUser) {
       alert("Please signin to continue");
-      return;
+      return "edit";
     }
 
-    const compressedImages = await compressImages(images);
-    console.log({ compressedImages });
-    const imageURLs = await uploadImages(
-      currentUser.uid,
-      compressedImages,
-      formState.courseCode,
-    );
-    console.log({ imageURLs });
-
-    const token = await currentUser.getIdToken();
-    const res = await uploadAction(formState, imageURLs, token);
+    const res = await _uploadFiles(currentUser)
 
     if (res.state != uploadActionStates.success) {
       setSubmitError(res.state);
-      return;
+      return "edit";
     }
+    return "completed";
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    setPageStage("uploading")
+    try {
+      const _pageState = await _handleSubmitWrapper(e)
+      setPageStage(_pageState)
+    } catch (e) {
+      setPageStage("edit")
+      console.error(e)
+      setSubmitError("An error occured while uploading the exam paper.")
+    }
+  }
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormState((prevState) => ({
       ...prevState,
