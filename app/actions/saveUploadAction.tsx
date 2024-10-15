@@ -1,6 +1,6 @@
 "use server";
 
-import { doc, runTransaction, setDoc } from "firebase/firestore";
+import { doc, runTransaction } from "firebase/firestore";
 
 import { getCourseCodeAvaliableDocPath, getExamEntryDocPath } from "app/firebase/paths";
 import { uploadActionStates } from "app/actions/actionStates";
@@ -8,12 +8,11 @@ import { firestore } from "app/firebase/firebase";
 import { FormState } from "app/hooks/uploadPaperForm";
 
 import { validateUploadForm } from "app/validators/validateUpload";
-import { validateImages } from "app/validators/validateImages";
 import { validateUser } from "app/validators/validateUser";
 
 export async function uploadAction(
   examData: FormState,
-  imageURLs: string[],
+  pdfURL: string,
   authToken: string,
 ) {
   let { errState, user } = await validateUser(authToken);
@@ -31,29 +30,30 @@ export async function uploadAction(
     };
   }
 
-  errState = validateImages(imageURLs);
-  if (errState != null) {
+  if (pdfURL == null || pdfURL == "") {
     return {
-      state: errState,
-    };
+      state: uploadActionStates.validationError
+    }
   }
 
-  const examType = examData.examType!;
-  const uploadedDate = (new Date()).toISOString();
-
-  const paperEntry = {
-    name: examData.name,
-    courseCode: examData.courseCode,
-    examType,
-    examSlot: examData.examSlot,
-    examDate: examData.examDate?.toISOString(),
-    imageURLs,
-
-    uploadedDate,
-    uploader: user.email,
-  };
+  //TODO: Check for valid firebase pdf url 
 
   try {
+    const examType = examData.examType!;
+    const uploadedDate = (new Date()).toISOString();
+
+    const paperEntry = {
+      name: examData.name,
+      courseCode: examData.courseCode,
+      examType,
+      examSlot: examData.examSlot!,
+      examDate: examData.examDate!.toISOString(),
+      pdfURL,
+
+      uploadedDate,
+      uploader: user.email,
+    };
+
     runTransaction(firestore, async (transaction) => {
       const papersRef = doc(
         firestore,
@@ -61,11 +61,11 @@ export async function uploadAction(
       );
       transaction.set(papersRef, {
         [user.uid]: paperEntry,
-      }, {merge: true});
+      }, { merge: true });
       const uploadsRef = doc(firestore, getCourseCodeAvaliableDocPath(examType));
       transaction.set(uploadsRef, {
         [examData.courseCode]: true,
-      }, {merge: true});
+      }, { merge: true });
     });
   } catch (error) {
     console.error("Error updating document: ", error);
