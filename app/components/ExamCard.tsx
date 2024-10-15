@@ -7,24 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FaCalendarAlt, FaCloudUploadAlt, FaUserClock } from "react-icons/fa";
+import { ExamEntry } from "app/data/ExamEntry";
 
-interface ExamCardProps {
-  courseCode: string;
-  examDate: Date;
-  examSlot: string;
-  examType: string;
-  imageURLs: string[];
-  name: string;
-  uploadedDate: Date;
-  uploader: string;
-}
-
-const ExamCard: React.FC<ExamCardProps> = ({
+const ExamCard: React.FC<ExamEntry> = ({
   courseCode,
   examDate,
   examSlot,
   examType,
-  imageURLs,
+  pdfURL,
   name,
   uploadedDate,
   uploader,
