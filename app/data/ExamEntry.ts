@@ -22,7 +22,7 @@ export type ExamEntry = {
   examDate: Date;
   examSlot: ExamSlot;
   examType: ExamType;
-  imageURLs: string[];
+  pdfURL: string;
   name: string;
   uploadedDate: Date;
   uploader: string;
