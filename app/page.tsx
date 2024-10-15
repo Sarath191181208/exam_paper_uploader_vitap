@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
 import React from "react";
-import { FiFeather, FiLayers } from "react-icons/fi";
+import { FiFeather, FiLayers, FiUploadCloud } from "react-icons/fi";
 import {
   IconCard,
   IconCardDescription,
@@ -46,20 +45,20 @@ export default function Home() {
               </IconCardDescription>
             </IconCard>
           </Link>
+
+
+          <Link href="/upload">
+            <IconCard>
+              <FiUploadCloud className="text-rose-400 text-6xl mb-4" />
+              <IconCardTitle title="Upload" />
+              <IconCardDescription>
+                Upload your files easily with this card.
+              </IconCardDescription>
+            </IconCard>
+          </Link>
+
         </div>
       </div>
     </div>
   );
 }
-
-interface LearnMoreButtonProps {
-  children: React.ReactNode;
-}
-
-const IconCardButton: React.FC<LearnMoreButtonProps> = ({ children }) => {
-  return (
-    <Button className="mt-auto hover:bg-gray-900" variant="outline">
-      {children}
-    </Button>
-  );
-};
