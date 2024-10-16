@@ -43,7 +43,7 @@ export async function uploadAction(
 
     const paperEntry = {
       name: examData.name,
-      courseCode: examData.courseCode,
+      courseCode: examData.courseCode.toUpperCase(),
       examType,
       examSlot: examData.examSlot!,
       examDate: examData.examDate!.toISOString(),
@@ -55,7 +55,7 @@ export async function uploadAction(
 
     firestoreAdmin.runTransaction(async (transaction) => {
       const papersRef = firestoreAdmin.doc(
-        getExamEntryDocPath(examData.courseCode, examType),
+        getExamEntryDocPath(paperEntry.courseCode, examType),
       );
       transaction.set(papersRef, {
         [user.uid]: paperEntry,
