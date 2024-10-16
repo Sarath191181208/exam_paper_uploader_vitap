@@ -59,7 +59,9 @@ export default function Home() {
     const compressedImages: File[] = await compressImages(images);
     const pdfFile = await getPDFFromImages(compressedImages);
     const pdfURL = await uploadPDF(user.uid, pdfFile)
+    console.log({pdfURL})
     const token = await user.getIdToken();
+    console.log({token})
     return await uploadAction(formState, pdfURL, token);
   }
 
@@ -85,7 +87,9 @@ export default function Home() {
       return "edit";
     }
 
+    console.log("Uploading the files")
     const res = await _uploadFiles(currentUser)
+    console.log({res})
 
     if (res.state != uploadActionStates.success) {
       setSubmitError(res.state);
