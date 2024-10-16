@@ -1,26 +1,17 @@
-"use server";
-
 import { getCourseCodeAvaliableDocPath, getExamEntryDocPath } from "app/firebase/paths";
 import { uploadActionStates } from "app/actions/actionStates";
 import { FormState } from "app/hooks/uploadPaperForm";
 
 import { validateUploadForm } from "app/validators/validateUpload";
-import { validateUser } from "app/validators/validateUser";
-
-import { firestoreAdmin } from "app/firebase/firebaseAdmin";
+import { doc, runTransaction } from "firebase/firestore";
+import { firestore } from "../firebase/firebase";
+import { User } from "firebase/auth";
 
 export async function uploadAction(
   examData: FormState,
   pdfURL: string,
-  authToken: string,
+  user: User
 ) {
-  let { errState, user } = await validateUser(authToken);
-  if (errState != null || user == null) {
-    return {
-      state: errState,
-    };
-  }
-
   const errors = validateUploadForm(examData);
   if (Object.keys(errors).length > 0) {
     return {
@@ -34,8 +25,6 @@ export async function uploadAction(
       state: uploadActionStates.validationError
     }
   }
-
-  //TODO: Check for valid firebase pdf url 
 
   try {
     const examType = examData.examType!;
@@ -53,14 +42,15 @@ export async function uploadAction(
       uploader: user.email,
     };
 
-    firestoreAdmin.runTransaction(async (transaction) => {
-      const papersRef = firestoreAdmin.doc(
+    await runTransaction(firestore, async (transaction) => {
+      const papersRef = doc(
+        firestore,
         getExamEntryDocPath(paperEntry.courseCode, examType),
       );
       transaction.set(papersRef, {
         [user.uid]: paperEntry,
       }, { merge: true });
-      const uploadsRef = firestoreAdmin.doc(getCourseCodeAvaliableDocPath(examType));
+      const uploadsRef = doc(firestore,getCourseCodeAvaliableDocPath(examType));
       transaction.set(uploadsRef, {
         [paperEntry.courseCode]: true,
       }, { merge: true });
