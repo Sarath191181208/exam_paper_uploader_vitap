@@ -2,7 +2,7 @@ import { FormErrors, FormState } from "app/hooks/uploadPaperForm";
 
 export function validateUploadForm(formState: FormState): FormErrors {
     const newErrors: FormErrors = {};
-    const COURSE_CODE_REGEX = /\w{3}\d{4}/;
+    const COURSE_CODE_REGEX = /^\w{3}\d{4}$/;
 
     // validate name errors
     if (!formState.name) newErrors.name = "Name is required.";
