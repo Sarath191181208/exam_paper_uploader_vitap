@@ -60,7 +60,6 @@ export async function uploadAction(
       transaction.set(papersRef, {
         [user.uid]: paperEntry,
       }, { merge: true });
-      console.log({paperEntry, uid: user.uid})
       const uploadsRef = firestoreAdmin.doc(getCourseCodeAvaliableDocPath(examType));
       transaction.set(uploadsRef, {
         [examData.courseCode]: true,

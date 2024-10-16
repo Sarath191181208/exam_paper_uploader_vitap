@@ -37,7 +37,6 @@ export const AuthProvider: React.FC<ScriptProps> = ({ children }) => {
 
   // Function to handle sign in
   const signIn = async () => {
-    console.log(auth);
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider);
   };
