@@ -50,7 +50,7 @@ export function UploadLoadingCard() {
     <div
       className="mt-6 flex items-center justify-center rounded-full mx-auto"
     >
-      { progressToText[uploadProgress] }
+      { progressToText[uploadProgress] ?? "Loading ... "}
     </div>
   </div>
 }
