@@ -1,14 +1,13 @@
 "use server";
 
-import { doc, runTransaction } from "firebase/firestore";
-
 import { getCourseCodeAvaliableDocPath, getExamEntryDocPath } from "app/firebase/paths";
 import { uploadActionStates } from "app/actions/actionStates";
-import { firestore } from "app/firebase/firebase";
 import { FormState } from "app/hooks/uploadPaperForm";
 
 import { validateUploadForm } from "app/validators/validateUpload";
 import { validateUser } from "app/validators/validateUser";
+
+import { firestoreAdmin } from "app/firebase/firebaseAdmin";
 
 export async function uploadAction(
   examData: FormState,
@@ -54,15 +53,15 @@ export async function uploadAction(
       uploader: user.email,
     };
 
-    runTransaction(firestore, async (transaction) => {
-      const papersRef = doc(
-        firestore,
+    firestoreAdmin.runTransaction(async (transaction) => {
+      const papersRef = firestoreAdmin.doc(
         getExamEntryDocPath(examData.courseCode, examType),
       );
       transaction.set(papersRef, {
         [user.uid]: paperEntry,
       }, { merge: true });
-      const uploadsRef = doc(firestore, getCourseCodeAvaliableDocPath(examType));
+      console.log({paperEntry, uid: user.uid})
+      const uploadsRef = firestoreAdmin.doc(getCourseCodeAvaliableDocPath(examType));
       transaction.set(uploadsRef, {
         [examData.courseCode]: true,
       }, { merge: true });

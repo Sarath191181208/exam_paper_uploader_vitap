@@ -1,4 +1,5 @@
-import { cert, initializeApp, ServiceAccount } from "firebase-admin/app";
+import { cert, initializeApp, ServiceAccount,  } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
 const firebaseOptions: ServiceAccount = {
   projectId: process.env.FIREBASE_PROJECT_ID,
@@ -9,3 +10,5 @@ const firebaseOptions: ServiceAccount = {
 export const admin = initializeApp({
   credential: cert(firebaseOptions),
 }, process.env.FIREBASE_PROJECT_ID);
+
+export const firestoreAdmin = getFirestore(admin);
