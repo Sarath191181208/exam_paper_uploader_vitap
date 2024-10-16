@@ -77,10 +77,10 @@ export default function Home() {
       return "edit";
     }
 
-    const VITAP_EMAIL_REGEX = ".*@vitapstudent.ac.in";
-    const VITAP_EMAIL_REGEX_2 = ".*@vitap.ac.in";
+    const VITAP_EMAIL_REGEX = /^.*@vitapstudent.ac.in$/;
+    const VITAP_EMAIL_REGEX_2 = /^.*@vitap.ac.in$/;
     
-    if (!currentUser.email.match(VITAP_EMAIL_REGEX) || !currentUser.email.match(VITAP_EMAIL_REGEX_2) ){
+    if (!currentUser.email.match(VITAP_EMAIL_REGEX) && !currentUser.email.match(VITAP_EMAIL_REGEX_2) ){
       alert("Please use your college email to upload the exam paper");
       return "edit";
     }
