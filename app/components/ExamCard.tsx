@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { FaCalendarAlt, FaCloudUploadAlt, FaUserClock } from "react-icons/fa";
+import { FaCalendarAlt, FaCloudUploadAlt, FaDownload, FaUserClock } from "react-icons/fa";
 import { ExamEntry } from "app/data/ExamEntry";
 
 const ExamCard: React.FC<ExamEntry> = ({
@@ -20,15 +20,14 @@ const ExamCard: React.FC<ExamEntry> = ({
   uploader,
 }) => {
   const formattedDate = examDate.toDateString();
+  const formattedUploadDate = new Date(uploadedDate).toDateString();
 
   return (
-    <Card className="shadow-lg rounded-lg p-6 bg-gray-800 space-y-4">
-      <CardHeader>
+    <Card className="bg-gray-800 text-gray-200">
+      <CardHeader className="space-y-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-2xl font-semibold text-gray-400">
-            {name}
-          </CardTitle>
-          <span className="text-lg font-bold text-gray-900 bg-gray-400 rounded-full px-3 py-1">
+          <CardTitle className="text-xl font-semibold">{name}</CardTitle>
+          <span className="text-sm font-bold text-gray-900 bg-gray-400 rounded-full px-3 py-1">
             {examSlot}
           </span>
         </div>
@@ -36,34 +35,31 @@ const ExamCard: React.FC<ExamEntry> = ({
           {courseCode} - {examType.toUpperCase()}
         </CardDescription>
       </CardHeader>
-
-      <CardContent className="space-y-4 overflow-y-hidden">
-        <div className="flex space-x-4">
-          <div className="flex flex-col justify-between space-y-2">
-            <div className="flex items-center text-gray-400">
-              <FaCalendarAlt className="h-5 w-5 text-gray-400 mr-2" />
-              <span className="font-medium">Exam Date:</span>
-              <span className="ml-1">{formattedDate}</span>
-            </div>
-
-            <div className="flex items-center text-gray-400">
-              <FaCloudUploadAlt className="h-5 w-5 text-gray-400 mr-2" />
-              <span className="font-medium">Uploaded:</span>
-              <span className="ml-1">
-                {new Date(uploadedDate).toDateString()}
-              </span>
-            </div>
-
-            <div className="flex items-center text-gray-400 break-words">
-              <FaUserClock className="h-5 w-5 text-gray-400 mr-2" />
-              <span className="font-medium">Uploader:</span>
-              <p className="ml-1 w-full break-words">{uploader}</p>
-            </div>
-          </div>
+      <CardContent className="space-y-4">
+        <div className="space-y-3">
+          <InfoItem icon={<FaCalendarAlt />} label="Exam Date" value={formattedDate} />
+          <InfoItem icon={<FaCloudUploadAlt />} label="Uploaded" value={formattedUploadDate} />
+          <InfoItem icon={<FaUserClock />} label="Uploader" value={uploader} />
         </div>
+        <a
+          href={pdfURL}
+          download
+          className="flex justify-center items-center gap-2 px-4 py-2 bg-gray-400 text-gray-900 font-semibold rounded-md hover:bg-gray-300 transition-colors"
+        >
+          <FaDownload className="h-5 w-5" />
+          Download Exam File
+        </a>
       </CardContent>
     </Card>
   );
 };
+
+const InfoItem: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
+  <div className="flex items-center space-x-2 text-sm">
+    <span className="text-gray-400">{icon}</span>
+    <span className="font-medium">{label}:</span>
+    <p className="text-gray-300  truncate overflow-ellipsis overflow-hidden">{value}</p>
+  </div>
+);
 
 export default ExamCard;

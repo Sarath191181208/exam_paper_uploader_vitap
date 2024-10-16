@@ -13,11 +13,9 @@ export default async function Home(
 
   return (
     <div className="container mx-auto py-12">
-      <div className="">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.values(examData).map((data: ExamEntry, index: number) => (
-          <div>
-            <ExamCard key={index} {...data} />
-          </div>
+          <ExamCard key={index} {...data} />
         ))}
       </div>
     </div>
