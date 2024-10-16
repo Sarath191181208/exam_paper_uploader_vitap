@@ -21,14 +21,14 @@ const CardsPage = async ({ params }: { params: { EXAM_TYPE: string } }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-8">
       {Object.keys(cardsData).map((key) => (
         cardsData[key] && (
-          <Link href={`/papers/${EXAM_TYPE}/${key}`}>
-          <SubjectCard
-            className="flex items-center gap-4 cursor-pointer"
-            key={key}
-          >
-            <NotebookPen className="text-indigo-400 text-6xl mb-4" />
-            <IconCardTitle title={key} />
-          </SubjectCard>
+          <Link key={key} href={`/papers/${EXAM_TYPE}/${key}`}>
+            <SubjectCard
+              className="flex items-center gap-4 cursor-pointer"
+              key={key}
+            >
+              <NotebookPen className="text-indigo-400 text-6xl mb-4" />
+              <IconCardTitle title={key} />
+            </SubjectCard>
           </Link>
         )
       ))}
@@ -41,7 +41,7 @@ const IconCardTitle = ({ title }: { title: string }) => (
 );
 
 const SubjectCard = (
-  { children, className}: { children: React.ReactNode; className: string},
+  { children, className }: { children: React.ReactNode; className: string },
 ) => (
   <div
     className={`bg-gray-800 rounded-lg shadow-lg p-6 hover:scale-105 transition-all text-center ${className}`}
