@@ -62,7 +62,7 @@ export async function uploadAction(
       }, { merge: true });
       const uploadsRef = firestoreAdmin.doc(getCourseCodeAvaliableDocPath(examType));
       transaction.set(uploadsRef, {
-        [examData.courseCode]: true,
+        [paperEntry.courseCode]: true,
       }, { merge: true });
     });
   } catch (error) {
