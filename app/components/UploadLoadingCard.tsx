@@ -6,7 +6,7 @@ export function UploadLoadingCard() {
 
   const [uploadProgress, setUploadProgress] = useState(10)
 
-  const progressToText = {
+  const progressToText : {[key: number]: string}  = {
     0: "Starting upload...",
     10: "Initializing upload...",
     20: "Preparing files...",
