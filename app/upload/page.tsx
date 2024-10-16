@@ -37,7 +37,7 @@ import { uploadPDF } from "./uploadPDF";
 import { User } from "firebase/auth";
 import { FaCheck, FaHome, FaUpload } from "react-icons/fa";
 import Link from "next/link";
-import { LoadingCard } from "/app/components/UploadLoadingCard";
+import { UploadLoadingCard } from "app/components/UploadLoadingCard";
 
 type PageState = "edit" | "uploading" | "completed";
 
@@ -132,7 +132,9 @@ export default function Home() {
         )}
 
         {pageState === "uploading" && (
-          <LoadingCard />
+          <div className="min-h-[70vh] grid items-center">
+            <UploadLoadingCard />
+          </div>
         )}
 
         {pageState === "completed" && (
