@@ -19,7 +19,7 @@ const ExamCard: React.FC<ExamEntry> = ({
   uploadedDate,
   uploader,
 }) => {
-  const formattedDate = examDate.toDateString();
+  const formattedDate = new Date(examDate).toDateString();
   const formattedUploadDate = new Date(uploadedDate).toDateString();
 
   return (

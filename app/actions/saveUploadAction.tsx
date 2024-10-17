@@ -1,12 +1,16 @@
-import { getCourseCodeAvaliableDocPath, getExamEntryDocPath } from "app/firebase/paths";
+"use server";
+
+import { getCourseCodeAvaliableDocPath, getExamEntryDocPath, getUserUploadDocPath } from "app/firebase/paths";
+
 import { uploadActionStates } from "app/actions/actionStates";
 import { FormState } from "app/hooks/uploadPaperForm";
 
 import { validateUploadForm } from "app/validators/validateUpload";
-import { doc, runTransaction } from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
-import { User } from "firebase/auth";
+import { validateUser } from "app/validators/validateUser";
 
+import { firestoreAdmin } from "app/firebase/firebaseAdmin";
+import { FieldValue } from "firebase-admin/firestore";
+        
 export async function uploadAction(
   examData: FormState,
   pdfURL: string,
@@ -42,17 +46,24 @@ export async function uploadAction(
       uploader: user.email,
     };
 
-    await runTransaction(firestore, async (transaction) => {
-      const papersRef = doc(
-        firestore,
+    await firestoreAdmin.runTransaction(async (transaction) => {
+      const papersRef = firestoreAdmin.doc(
+
         getExamEntryDocPath(paperEntry.courseCode, examType),
       );
+      const uploadsRef = firestoreAdmin.doc(getCourseCodeAvaliableDocPath(examType));
+      const userUploadRef = firestoreAdmin.doc(getUserUploadDocPath(user.uid));
+
       transaction.set(papersRef, {
-        [user.uid]: paperEntry,
+        [`${user.uid}-${paperEntry.examSlot}`]: paperEntry,
       }, { merge: true });
-      const uploadsRef = doc(firestore,getCourseCodeAvaliableDocPath(examType));
+
       transaction.set(uploadsRef, {
         [paperEntry.courseCode]: true,
+      }, { merge: true });
+
+      transaction.set(userUploadRef, {
+        numberOfUploads: FieldValue.increment(1),
       }, { merge: true });
     });
   } catch (error) {
