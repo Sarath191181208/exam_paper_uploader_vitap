@@ -21,6 +21,5 @@ export function getExamEntryDocPath(
 export function getCourseCodeAvaliableDocPath(
   examType: ExamType 
 ) : string{
-  //return "uploads", examType
   return `uploads/${examType}`
 }

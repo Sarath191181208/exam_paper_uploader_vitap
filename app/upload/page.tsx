@@ -59,10 +59,8 @@ export default function Home() {
     const compressedImages: File[] = await compressImages(images);
     const pdfFile = await getPDFFromImages(compressedImages);
     const pdfURL = await uploadPDF(user.uid, pdfFile)
-    console.log({pdfURL})
-    const token = await user.getIdToken();
-    console.log({token})
-    return await uploadAction(formState, pdfURL, token);
+    const r =  await uploadAction(formState, pdfURL, user);
+    return r;
   }
 
   const _handleSubmitWrapper = async (e: FormEvent): Promise<PageState> => {
