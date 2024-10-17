@@ -53,7 +53,7 @@ export async function uploadAction(
       uploader: user.email,
     };
 
-    firestoreAdmin.runTransaction(async (transaction) => {
+    await firestoreAdmin.runTransaction(async (transaction) => {
       const papersRef = firestoreAdmin.doc(
         getExamEntryDocPath(paperEntry.courseCode, examType),
       );
