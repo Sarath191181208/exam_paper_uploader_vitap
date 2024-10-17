@@ -3,7 +3,7 @@ import { PDFDocument } from 'pdf-lib';
 export async function getPDFFromImages(compressedImages: File[]): Promise<File> {
   const pdfDoc = await PDFDocument.create();
 
-  for (const image of compressedImages.reverse()) {
+  for (const image of compressedImages) {
     const imgBuffer = await image.arrayBuffer();
     
     const img = await pdfDoc.embedJpg(imgBuffer); // You can use embedPng for PNGs
