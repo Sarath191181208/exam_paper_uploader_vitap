@@ -1,6 +1,6 @@
 "use server";
 
-import { getCourseCodeAvaliableDocPath, getExamEntryDocPath } from "app/firebase/paths";
+import { getCourseCodeAvaliableDocPath, getExamEntryDocPath, getUserUploadDocPath } from "app/firebase/paths";
 import { uploadActionStates } from "app/actions/actionStates";
 import { FormState } from "app/hooks/uploadPaperForm";
 
@@ -8,6 +8,7 @@ import { validateUploadForm } from "app/validators/validateUpload";
 import { validateUser } from "app/validators/validateUser";
 
 import { firestoreAdmin } from "app/firebase/firebaseAdmin";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function uploadAction(
   examData: FormState,
@@ -57,12 +58,19 @@ export async function uploadAction(
       const papersRef = firestoreAdmin.doc(
         getExamEntryDocPath(paperEntry.courseCode, examType),
       );
-      transaction.set(papersRef, {
-        [user.uid]: paperEntry,
-      }, { merge: true });
       const uploadsRef = firestoreAdmin.doc(getCourseCodeAvaliableDocPath(examType));
+      const userUploadRef = firestoreAdmin.doc(getUserUploadDocPath(user.uid));
+
+      transaction.set(papersRef, {
+        [`${user.uid}-${paperEntry.examSlot}`]: paperEntry,
+      }, { merge: true });
+
       transaction.set(uploadsRef, {
         [paperEntry.courseCode]: true,
+      }, { merge: true });
+
+      transaction.set(userUploadRef, {
+        numberOfUploads: FieldValue.increment(1),
       }, { merge: true });
     });
   } catch (error) {
