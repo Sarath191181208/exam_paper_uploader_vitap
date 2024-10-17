@@ -12,6 +12,7 @@ import { FieldValue } from "firebase-admin/firestore";
 
 export async function uploadAction(
   examData: FormState,
+  examDateISO: string | undefined,
   pdfURL: string,
   authToken: string,
 ) {
@@ -21,7 +22,13 @@ export async function uploadAction(
       state: errState,
     };
   }
+  if (examDateISO == undefined){
+    return {
+      state: uploadActionStates.noData
+    }
+  }
 
+  examData.examDate = new Date(examDateISO);
   const errors = validateUploadForm(examData);
   if (Object.keys(errors).length > 0) {
     return {

@@ -62,7 +62,7 @@ export default function Home() {
     console.log({pdfURL})
     const token = await user.getIdToken();
     console.log({token})
-    return await uploadAction(formState, pdfURL, token);
+    return await uploadAction(formState, formState.examDate?.toISOString(), pdfURL, token);
   }
 
   const _handleSubmitWrapper = async (e: FormEvent): Promise<PageState> => {
