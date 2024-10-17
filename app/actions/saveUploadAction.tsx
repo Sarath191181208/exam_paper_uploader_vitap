@@ -54,7 +54,7 @@ export async function uploadAction(
       courseCode: examData.courseCode.toUpperCase(),
       examType,
       examSlot: examData.examSlot!,
-      examDate: examData.examDate!.toISOString(),
+      examDate: examDateISO,
       pdfURL,
 
       uploadedDate,
