@@ -9,6 +9,13 @@ import {
 import { FaCalendarAlt, FaCloudUploadAlt, FaDownload, FaUserClock } from "react-icons/fa";
 import { ExamEntry } from "app/data/ExamEntry";
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 const ExamCard: React.FC<ExamEntry> = ({
   courseCode,
   examDate,
@@ -19,8 +26,11 @@ const ExamCard: React.FC<ExamEntry> = ({
   uploadedDate,
   uploader,
 }) => {
-  const formattedDate = new Date(examDate).toDateString();
-  const formattedUploadDate = new Date(uploadedDate).toDateString();
+  const formattedDate = dayjs(examDate)
+    .format('DD-MMM-YYYY'); 
+
+  const formattedUploadDate = dayjs(uploadedDate)
+    .format('DD-MMM-YYYY');
 
   return (
     <Card className="bg-gray-800 text-gray-200">
