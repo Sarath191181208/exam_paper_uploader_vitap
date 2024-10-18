@@ -59,9 +59,9 @@ export default function Home() {
     const compressedImages: File[] = await compressImages(images);
     const pdfFile = await getPDFFromImages(compressedImages);
     const pdfURL = await uploadPDF(user.uid, pdfFile)
-    console.log({pdfURL})
+    console.log({ pdfURL })
     const token = await user.getIdToken();
-    console.log({token})
+    console.log({ token })
     return await uploadAction(formState, pdfURL, token);
   }
 
@@ -74,22 +74,22 @@ export default function Home() {
       return "edit";
     }
 
-    if (!currentUser.email){
+    if (!currentUser.email) {
       alert("This shouldn't be happending please contact us")
       return "edit";
     }
 
     const VITAP_EMAIL_REGEX = /^.*@vitapstudent.ac.in$/;
     const VITAP_EMAIL_REGEX_2 = /^.*@vitap.ac.in$/;
-    
-    if (!currentUser.email.match(VITAP_EMAIL_REGEX) && !currentUser.email.match(VITAP_EMAIL_REGEX_2) ){
+
+    if (!currentUser.email.match(VITAP_EMAIL_REGEX) && !currentUser.email.match(VITAP_EMAIL_REGEX_2)) {
       alert("Please use your college email to upload the exam paper");
       return "edit";
     }
 
     console.log("Uploading the files")
     const res = await _uploadFiles(currentUser)
-    console.log({res})
+    console.log({ res })
 
     if (res.state != uploadActionStates.success) {
       setSubmitError(res.state);
@@ -329,12 +329,18 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
             <Calendar
               mode="single"
               selected={formState.examDate ?? undefined}
-              onSelect={(_, selectedDay) => {
+              onSelect={(_, selectedDate) => {
+                // User's timezone shouldn't affect the date 
+                // Therefore we are extracting date from the user and making it UTC+00:00
+                const year = parseInt(selectedDate.toLocaleString('default', { year: 'numeric' }));
+                const month = parseInt(selectedDate.toLocaleString('default', { month: '2-digit' }));
+                const day = parseInt(selectedDate.toLocaleString('default', { day: '2-digit' }));
+                const date = new Date(Date.UTC(year, month, day, 0, 0, 0, 0))
                 handleInputChange({
                   target: {
                     id: "examDate",
                     // @ts-ignore
-                    value: selectedDay,
+                    value: date,
                   },
                 });
               }}
