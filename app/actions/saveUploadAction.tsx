@@ -9,6 +9,7 @@ import { validateUser } from "app/validators/validateUser";
 
 import { firestoreAdmin } from "app/firebase/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
+import { isValidUserEmail } from "app/validators/validateUserEmail";
 
 export async function uploadAction(
   examData: FormState,
@@ -34,6 +35,12 @@ export async function uploadAction(
     return {
       state: uploadActionStates.validationError
     }
+  }
+
+  if (!isValidUserEmail(user.email)) {
+    return {
+      state: uploadActionStates.invalidEmail,
+    };
   }
 
   //TODO: Check for valid firebase pdf url 
