@@ -335,7 +335,7 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
                 const year = parseInt(selectedDate.toLocaleString('default', { year: 'numeric' }));
                 const month = parseInt(selectedDate.toLocaleString('default', { month: '2-digit' }));
                 const day = parseInt(selectedDate.toLocaleString('default', { day: '2-digit' }));
-                const date = new Date(Date.UTC(year, month, day, 0, 0, 0, 0))
+                const date = new Date(Date.UTC(year, month-1, day, 0, 0, 0, 0))
                 handleInputChange({
                   target: {
                     id: "examDate",
