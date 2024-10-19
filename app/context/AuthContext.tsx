@@ -38,11 +38,11 @@ export const AuthProvider: React.FC<ScriptProps> = ({ children }) => {
   // Function to handle sign in
   const signIn = async () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider);
+    await signInWithPopup(auth, provider);
   };
 
   const signOut = async () => {
-    firebaseSignOut(auth);
+    await firebaseSignOut(auth);
   };
 
   // Effect to set up authentication state listener
