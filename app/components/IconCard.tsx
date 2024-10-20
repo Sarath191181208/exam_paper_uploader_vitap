@@ -36,12 +36,13 @@ export const IconCardDescription: React.FC<IconCardDescriptionProps> = (
 };
 
 interface IconCardProps {
+  className?: string;
   children: React.ReactNode;
 }
 
-export const IconCard: React.FC<IconCardProps> = ({ children}) => {
+export const IconCard: React.FC<IconCardProps> = ({ children, className}) => {
   return (
-    <div className="bg-gray-800 rounded-lg shadow-lg p-6 hover:scale-105 transition-all flex flex-col items-center text-center">
+    <div className={"bg-gray-800 rounded-lg shadow-lg p-6 hover:scale-105 transition-all flex flex-col items-center text-center h-full " + className}>
       {children}
     </div>
   );
