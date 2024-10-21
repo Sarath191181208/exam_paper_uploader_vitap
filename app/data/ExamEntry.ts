@@ -1,5 +1,5 @@
 export type CourseCode = string;
-export type ExamType = "cat1" | "cat2" | "fat";
+export type ExamType = "cat" | "cat1" | "cat2" | "fat";
 
 export type ExamSlot =
   | "A1"

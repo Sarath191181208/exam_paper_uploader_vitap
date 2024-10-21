@@ -1,11 +1,12 @@
 import React from "react";
-import { FiFeather, FiLayers, FiUploadCloud } from "react-icons/fi";
+import { FiBox, FiFeather, FiLayers, FiUploadCloud } from "react-icons/fi";
 import {
   IconCard,
   IconCardDescription,
   IconCardTitle,
 } from "./components/IconCard";
 import Link from "next/link";
+import { Figtree } from "next/font/google";
 
 export default function Home() {
   return (
@@ -20,6 +21,17 @@ export default function Home() {
           exam papers and access them whenever needed.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <Link href="/upload">
+            <IconCard>
+              <FiUploadCloud className="text-rose-400 text-6xl mb-4" />
+              <IconCardTitle title="Upload" />
+              <IconCardDescription>
+                Effortlessly upload your exam papers with just a click!
+              </IconCardDescription>
+            </IconCard>
+          </Link>
+
           <Link href="/papers/cat1">
             <IconCard>
               <FiLayers className="text-indigo-400 text-6xl mb-4" />
@@ -51,12 +63,12 @@ export default function Home() {
           </Link>
 
 
-          <Link href="/upload" className="">
-            <IconCard className="">
-              <FiUploadCloud className="text-rose-400 text-6xl mb-4" />
-              <IconCardTitle title="Upload" />
+          <Link href="/papers/cat">
+            <IconCard>
+              <FiBox className="text-cyan-400 text-6xl mb-4" />
+              <IconCardTitle title="Cat" />
               <IconCardDescription>
-                Effortlessly upload your exam papers with just a click!
+                Look into the past CAT Exam Papers!
               </IconCardDescription>
             </IconCard>
           </Link>

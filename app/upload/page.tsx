@@ -263,6 +263,7 @@ function ExamForm({ formState, handleInputChange, errors }: ExamFormProps) {
             <SelectValue placeholder="Select an Exam" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="cat">CAT</SelectItem>
             <SelectItem value="cat1">CAT1</SelectItem>
             <SelectItem value="cat2">CAT2</SelectItem>
             <SelectItem value="fat">FAT</SelectItem>
