@@ -6,7 +6,6 @@ import {
   IconCardTitle,
 } from "./components/IconCard";
 import Link from "next/link";
-import { Figtree } from "next/font/google";
 
 export default function Home() {
   return (
