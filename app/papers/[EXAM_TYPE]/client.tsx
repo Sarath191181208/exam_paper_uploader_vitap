@@ -5,6 +5,8 @@ import { NotebookPen } from "lucide-react";
 import { ExamType } from "@/app/data/ExamEntry";
 import Link from "next/link";
 import { FiSearch } from "react-icons/fi";
+import { courseCodeToName } from "@/app/data/CoursecodeToName";
+import { getShortForm } from "@/app/utils/toShortForm";
 
 export const CardsClient = ({
   cardsData,
@@ -17,14 +19,25 @@ export const CardsClient = ({
   const [filteredCardsData, setFilteredCardsData] = useState(cardsData);
 
   useEffect(() => {
-    const filteredData = Object.keys(cardsData).filter((key) =>
-      key.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredData = Object.keys(cardsData).filter((courseCode) => {
+      const courseName = courseCodeToName[courseCode] || '';
+      const shortForm = getShortForm(courseName);
+      const normalizedSearchTerm = searchTerm.toLowerCase();
+
+      if (
+        courseCode.toLowerCase().includes(normalizedSearchTerm) ||
+        courseName.toLowerCase().includes(normalizedSearchTerm) ||
+        shortForm.toLowerCase().includes(normalizedSearchTerm)
+      ) {
+        return true;
+      }
+      return false;
+    });
     setFilteredCardsData(filteredData);
   }, [searchTerm, cardsData]);
 
   return (
-    <div className="p-8">
+    <div className="p-4">
       <div className="mb-8">
         <div className="relative">
           <input
@@ -40,15 +53,20 @@ export const CardsClient = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCardsData.length > 0 ? (
-          filteredCardsData.map((key: string) => (
-            cardsData[key] && (
-              <Link key={key} href={`/papers/${EXAM_TYPE}/${key}`}>
+          filteredCardsData.map((coursecode: string) => (
+            cardsData[coursecode] && (
+              <Link key={coursecode} href={`/papers/${EXAM_TYPE}/${coursecode}`}>
                 <SubjectCard
-                  className="flex items-center gap-4 cursor-pointer"
-                  key={key}
+                  className="cursor-pointer"
+                  key={coursecode}
                 >
-                  <NotebookPen className="text-indigo-400 text-6xl mb-4" />
-                  <IconCardTitle title={key} />
+                  <div className="flex items-center gap-4">
+                    <NotebookPen className="text-indigo-400 text-6xl mb-4" />
+                    <IconCardTitle title={coursecode} />
+                  </div>
+                  <IconCardDescription>
+                    {courseCodeToName[coursecode] || ''}
+                  </IconCardDescription>
                 </SubjectCard>
               </Link>
             )
@@ -65,6 +83,12 @@ export const CardsClient = ({
 
 const IconCardTitle = ({ title }: { title: string }) => (
   <h2 className="text-2xl font-semibold mb-4">{title}</h2>
+);
+
+const IconCardDescription = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-gray-400 text-sm text-left">
+    {children}
+  </p>
 );
 
 const SubjectCard = (
