@@ -19,9 +19,9 @@ export const fetchExamEntries = async ( examType: ExamType, courseCode: CourseCo
   if( resp.exists() ) { 
     const data =  resp.data() as { [key: string] : ExamEntry};
     // conver the data.examDate and data.uploadedDate into date object 
-    Object.keys(data).forEach( key => {
-      data[key].examDate = new Date(data[key].examDate);
-      data[key].uploadedDate = new Date(data[key].uploadedDate);
+    Object.keys(data).forEach( user_id => {
+      data[user_id].examDate = new Date(data[user_id].examDate);
+      data[user_id].uploadedDate = new Date(data[user_id].uploadedDate);
     }); 
     return data;
   }
