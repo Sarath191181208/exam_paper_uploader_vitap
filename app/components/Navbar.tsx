@@ -8,7 +8,6 @@ import { useAuth } from "../context/AuthContext";
 "rounded-circle";
 
 export const Navbar = () => {
-  //const { user, signInWithGoogle, signOutWithGoogle } = useAuth();
   const {
     currentUser: user,
     signIn: signInWithGoogle,
@@ -46,10 +45,6 @@ export const Navbar = () => {
               className="rounded-full"
             />
           )
-          : <></>}
-        {/* showing the name */}
-        {user
-          ? <p className="text-xl cursor-default">{user.displayName}</p>
           : <></>}
       </div>
       <div className="flex flex-row gap-4 items-center">
